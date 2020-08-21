@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -10,28 +11,76 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Controller {
 
     private Model model;
-
+    private Desktop desktop = Desktop.getDesktop();
     public Controller(){
         this.model = new Model(new BasicEncoder(),new BasicDecoder());
     }
-
     @FXML
    private ImageView originImage;
     @FXML
    private TextArea fieldMessage;
     @FXML
     private ImageView modifiedImage;
-
+    @FXML
+    private Button bt_saveE;
+    @FXML
+    private Button bt_OpenE;
+    @FXML
+    private VBox vbAnh;
     public void onEncode() {
         Image modified = model.encode(originImage.getImage(), fieldMessage.getText());
         modifiedImage.setImage(modified);
     }
-
+    @FXML
+    private void handlerSaveClick( ActionEvent event){
+        Window stage = new Stage();
+        bt_saveE.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Image");
+                System.out.println(modifiedImage.getId());
+                File file = fileChooser.showSaveDialog(stage);
+                if (file != null) {
+                    try {
+                        ImageIO.write(SwingFXUtils.fromFXImage(modifiedImage.getImage(),
+                                null), "png", file);
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        });
+    }
+    @FXML
+    private  void handlerOpenClick(ActionEvent event){
+        FileChooser fileChooser = new FileChooser();
+        Window stage = new Stage();
+        bt_OpenE.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                configureFileChooser(fileChooser);
+                File file = fileChooser.showOpenDialog(stage);
+                if (file != null) {
+                    openFile(file);
+                }
+            }
+        });
+    }
     public void Encode(ActionEvent event){
         System.out.println("Clicked......");
     }
@@ -39,5 +88,28 @@ public class Controller {
     public void onDecode() {
         String message = model.decode(modifiedImage.getImage());
         System.out.println(message);
+    }
+    private static void configureFileChooser(
+            final FileChooser fileChooser) {
+        fileChooser.setTitle("View Pictures");
+        fileChooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.*"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+    }
+    private void openFile(File file) {
+        try {
+            //desktop.open(file);
+            Image image = new Image (file.toURI().toString());
+            originImage.setImage(image);
+        } catch (Exception ex) {
+            Logger.getLogger(Controller.class.getName()).log(
+                    Level.SEVERE, null, ex
+            );
+        }
     }
 }
