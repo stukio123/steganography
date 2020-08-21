@@ -21,7 +21,7 @@ public class View extends Pane {
         ImageView modifiedView = new ImageView();
         modifiedView.setTranslateX(635);
 
-        TextField field = new TextField("Enter message");
+        /*TextField field = new TextField("Enter message");
         field.setTranslateY(454);
         field.setOnAction(e -> controller.onEncode());
 
@@ -30,8 +30,8 @@ public class View extends Pane {
         btnDecode.setTranslateY(454);
         btnDecode.setOnAction(e -> controller.onDecode());
 
-        controller.injectUI(originalView, modifiedView, field);
+        controller.injectUI(originalView, modifiedView, field);*/
 
-        getChildren().addAll(originalView, modifiedView, field, btnDecode);
+        //getChildren().addAll(originalView, modifiedView, field, btnDecode);
     }
 }
