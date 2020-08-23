@@ -35,6 +35,10 @@ public class Controller {
     @FXML
    private TextArea fieldMessage;
     @FXML
+    private ImageView originImage2;
+    @FXML
+    private TextArea fieldMessage2;
+    @FXML
     private ImageView modifiedImage;
     @FXML
     private Button bt_saveE;
